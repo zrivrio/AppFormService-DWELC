@@ -1,38 +1,33 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';  
-import { LoggerService } from '../../services/logger.service';
-import { Event } from '../../models/event.model';
+import { Component, OnInit } from '@angular/core';
+import { EventSService } from '../../services/event-s.service';
+import { EventM } from '../../models/eventM.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-event-list',
-  standalone: true,  
-  imports: [CommonModule],  
+  imports: [CommonModule],
   templateUrl: './event-list.component.html',
-  styleUrls: ['./event-list.component.css']
+  styleUrl: './event-list.component.css'
 })
-export class EventListComponent {
+export class EventListComponent implements OnInit {
+  eventos: EventM[] = [];
 
-  allEvents: Event[] = [];
-  events: Event[] = [];
-  eventsCount = { log: 0, warn: 0, error: 0 }; 
-
-  constructor(private loggerService: LoggerService) {}
+  constructor(private eventService: EventSService) {}
 
   ngOnInit(): void {
-    this.allEvents = this.loggerService.getEvents();
-    this.updateEventCount();
-    this.events = [...this.allEvents];
+    this.eventService.loadEventos();
+    this.eventos = this.eventService.getEventos();
+  
+    console.log("Eventos cargados en EventListComponent:", this.eventos);
   }
 
-  updateEventCount(): void {
-    this.eventsCount = {
-      log: this.allEvents.filter(event => event.type === 'log').length,   
-      warn: this.allEvents.filter(event => event.type === 'warn').length, 
-      error: this.allEvents.filter(event => event.type === 'error').length
-    };
-  }
+  onFilterChange(event: Event): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
 
-  onFilterCategory(category: string): void {
-    this.events = this.allEvents.filter(event => event.type === category); 
+    if (selectedValue === 'all') {
+      this.eventos = this.eventService.getEventos();
+    } else {
+      this.eventos = this.eventService.getEventos().filter(ev => ev.classification === selectedValue);
+    }
   }
 }

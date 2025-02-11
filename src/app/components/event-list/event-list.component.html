@@ -1,16 +1,47 @@
-<div class="container">
-  <h2>Events</h2>
-  <button (click)="onFilterCategory('log')">Log</button>
-  <button (click)="onFilterCategory('warn')">Warn</button>
-  <button (click)="onFilterCategory('error')">Error</button>
+<div class="container mt-4">
+    <h2>Lista de Eventos</h2>
   
-  <ul>
-    <li *ngFor="let event of events" class="event-card {{ event.type }}">
-      <div class="event-category">{{ event.type }}</div>
-      <strong>{{ event.title }}</strong> - {{ event.date | date:'short' }}
-      <p>{{ event.description }}</p>
-    </li>
-  </ul>
-
-  <p>Total events: Log: {{ eventsCount.log }}, Warm: {{ eventsCount.warn }}, Error: {{ eventsCount.error }}</p>
-</div>
+    <!-- Filtros por clasificación -->
+    <div class="mb-3">
+      <label for="filter" class="form-label">Filtrar por clasificación:</label>
+      <select class="form-select" id="filter" (change)="onFilterChange($event)">
+        <option value="all">Todos</option>
+        <option value="log">Log</option>
+        <option value="warn">Warn</option>
+        <option value="error">Error</option>
+      </select>
+    </div>
+  
+    <!-- Tabla de eventos -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Clasificación</th>
+          <th>Empleado</th>
+          <th>Cliente</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of eventos">
+          <td>{{ event.title }}</td>
+          <td>{{ event.description }}</td>
+          <td>
+            <span class="badge text-uppercase px-2 py-1" 
+              [ngClass]="{
+                'bg-success': event.classification === 'log',
+                'bg-warning text-dark': event.classification === 'warn',
+                'bg-danger': event.classification === 'error'
+              }">
+              {{ event.classification }}
+            </span>
+          </td>
+          <td>{{ event.employee.name }}</td>
+          <td>{{ event.client }}</td>
+          <td>{{ event.date | date: 'dd/MM/yyyy' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

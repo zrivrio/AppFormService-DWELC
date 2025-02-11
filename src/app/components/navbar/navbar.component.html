@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm p-3">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold text-primary" href="#">Sistema de Eventos</a>
+
+    <!-- Employee Selection -->
+    <div class="d-flex align-items-center gap-3">
+      <span class="fw-medium text-secondary">
+        Empleado seleccionado: <strong class="text-dark">{{ selectedEmployee?.name || 'Ninguno' }}</strong>
+      </span>
+
+      <div class="position-relative">
+        <select class="form-select form-select-sm" (change)="onEmployeeChange($event)" *ngIf="employees.length > 0">
+          <option value="">Seleccionar empleado</option>
+          <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+        </select>
+        <p *ngIf="employees.length === 0" class="text-muted small m-0">Cargando empleados...</p>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="d-flex gap-2">
+      <a [routerLink]="['/form']" routerLinkActive="active" class="btn btn-outline-info btn-sm px-3">
+        Formulario de eventos
+      </a>
+      <a [routerLink]="['/list']" routerLinkActive="active" class="btn btn-outline-secondary btn-sm px-3">
+        Lista de eventos
+      </a>
+    </div>
+
+  </div>
+</nav>

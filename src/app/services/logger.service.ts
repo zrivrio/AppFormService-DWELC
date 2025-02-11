@@ -1,35 +1,29 @@
-import { Injectable } from '@angular/core';
-import { Event } from '../models/event.model';
+import {Injectable} from '@angular/core';
+import {count} from "rxjs";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class LoggerService {
-  private events: Event[] = [];
 
-  constructor() {}
+  countLog =0;
+  countWarn =0;
+  countError =0;
 
-  // Método para agregar un evento
-  addEvent(event: Event): void {
-    this.events.push(event);
+  constructor() {
   }
 
-  // Método para obtener los eventos, con filtro opcional por tipo
-  getEvents(category?: 'log' | 'warn' | 'error'): Event[] {
-    return category ? this.events.filter(event => event.type === category) : this.events;
+  getCounts() {
+    return {
+      log: this.countLog,
+      warn: this.countWarn,
+      error: this.countError
+    };
   }
 
-  // Método para contar los eventos por tipo
-  getEventsCount(): { log: number; warn: number; error: number } { 
-    return this.events.reduce(
-      (counts, event) => {
-        // Asegurándonos de incrementar el conteo del tipo correspondiente
-        if (counts[event.type] !== undefined) {
-          counts[event.type]++;
-        }
-        return counts;
-      },
-      { log: 0, warn: 0, error: 0 }  
-    );
+   updateCounts(classification: 'log' | 'warn' | 'error') {
+    if (classification === 'log') this.countLog++;
+    else if (classification === 'warn') this.countWarn++;
+    else if (classification === 'error') this.countError++;
   }
 }

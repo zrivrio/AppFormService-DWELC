@@ -1,54 +1,68 @@
-<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
-  <label>
-    Tipo de Evento:
-    <select formControlName="type">
-      <option value="log">Log</option>
-      <option value="warn">Warn</option>
-      <option value="error">Error</option>
-    </select>
-  </label>
+<div class="container mt-4">
+  <h2>Registrar Evento</h2>
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <!-- Título -->
+    <div class="mb-3">
+      <label for="title" class="form-label">Título</label>
+      <input type="text" class="form-control" id="title" formControlName="title" required>
+      <div *ngIf="eventForm.get('title')?.invalid && eventForm.get('title')?.touched" class="text-danger">
+        El título es requerido.
+      </div>
+    </div>
 
-  <label>
-    Empleado:
-    <select formControlName="employee">
-      <option *ngFor="let emp of employees" [value]="emp.name">{{ emp.name }}</option>
-    </select>
-  </label>
+    <!-- Descripción -->
+    <div class="mb-3">
+      <label for="description" class="form-label">Descripción</label>
+      <textarea class="form-control" id="description" formControlName="description" rows="3" required></textarea>
+      <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="text-danger">
+        La descripción es requerida.
+      </div>
+    </div>
 
-  <label>
-    Cliente:
-    <select formControlName="client">
-      <option *ngFor="let client of clients" [value]="client.name">{{ client.name }}</option>
-    </select>
-  </label>
+    <!-- Clasificación -->
+    <div class="mb-3">
+      <label for="classification" class="form-label">Clasificación</label>
+      <select class="form-select" id="classification" formControlName="classification" required>
+        <option value="log">Log</option>
+        <option value="warn">Warn</option>
+        <option value="error">Error</option>
+      </select>
+    </div>
 
-  <label>
-    Fecha del Evento:
-    <div class="col-xs-12 col-12 col-md-4 form-group mb-3">
+    <!-- Empleado -->
+    <div class="mb-3">
+      <label for="employee" class="form-label">Empleado</label>
+      <div *ngIf="selectedEmployee">
+        <p>Empleado seleccionado: {{ selectedEmployee.name }}</p>
+      </div>
+    </div>
+
+    <!-- Cliente -->
+    <div class="mb-3">
+      <label for="client" class="form-label">Cliente</label>
+      <input type="text" class="form-control" id="client" formControlName="client" required>
+      <div *ngIf="eventForm.get('client')?.invalid && eventForm.get('client')?.touched" class="text-danger">
+        El cliente es requerido.
+      </div>
+    </div>
+
+    <!-- Fecha -->
+    <div class="mb-3">
+      <label for="date" class="form-label">Fecha del Evento</label>
       <input 
         type="text"
         formControlName="date"
         placeholder="Seleccione una fecha"
         class="form-control"
         bsDatepicker
-        [bsConfig]="bsConfig">
+        [bsConfig]="bsConfig"
+      >
+      <div *ngIf="eventForm.get('date')?.invalid && eventForm.get('date')?.touched" class="text-danger">
+        La fecha es requerida y debe ser válida.
+      </div>
     </div>
-  </label>
 
-  <label>
-    Título:
-    <input type="text" formControlName="title" />
-  </label>
-
-  <label>
-    Descripción:
-    <textarea formControlName="description"></textarea>
-  </label>
-
-  <label>
-    Estado:
-    <input type="text" formControlName="status" />
-  </label>
-
-  <button type="submit" [disabled]="eventForm.invalid">Registrar Evento</button>
-</form>
+    <!-- Botón de envío -->
+    <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid">Registrar Evento</button>
+  </form>
+</div>
