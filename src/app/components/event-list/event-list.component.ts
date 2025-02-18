@@ -58,4 +58,10 @@ export class EventListComponent implements OnInit {
     this.countWarn = count.warn;
     this.countError = count.error;
   }
+
+  deleteEvent(id: number): void {
+    this.eventService.deleteEvento(id);
+    this.eventos = this.eventService.getEventos();
+    this.updateCounts();
+  }
 }

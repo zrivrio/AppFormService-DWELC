@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LoggerService } from './logger.service';
 import { EventM } from '../models/eventM.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -68,6 +69,24 @@ export class EventSService {
   getEventos(){
     return this.eventos;
   }
+
+// Método para eliminar un evento de la lista
+deleteEvento(id: number): void {
+  // Buscar el índice del evento en el array
+  const index = this.eventos.findIndex(evento => evento.id === id);
+
+  // Si se encuentra el evento, eliminarlo
+  if (index !== -1) {
+    const deletedEvent = this.eventos.splice(index, 1)[0]; // Eliminamos el evento y guardamos el eliminado
+
+    // Actualizar el localStorage
+    this.saveEventos();
+
+    // Opcionalmente, actualizar contadores si es necesario
+    this.loggerService.decreaseCount(deletedEvent.classification);
+  }
+}
+
 
 
 }
