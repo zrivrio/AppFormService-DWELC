@@ -17,12 +17,14 @@ export class LoggerService {
 
   //Obtener conteos desde el localStorage
   private loadCountsFormStorage(): void {
-    const eventosGuardados = localStorage.getItem('eventos');
-    if (eventosGuardados){
-      const eventos : EventM[] = JSON.parse(eventosGuardados);
-      this.countLog = eventos.filter(event => event.classification === 'log').length;
-      this.countWarn = eventos.filter(event => event.classification === 'warn').length;
-      this.countError = eventos.filter(event => event.classification === 'error').length;
+    if(typeof localStorage !== 'undefined'){
+      const eventosGuardados = localStorage.getItem('eventos');
+      if (eventosGuardados){
+        const eventos : EventM[] = JSON.parse(eventosGuardados);
+        this.countLog = eventos.filter(event => event.classification === 'log').length;
+        this.countWarn = eventos.filter(event => event.classification === 'warn').length;
+        this.countError = eventos.filter(event => event.classification === 'error').length;
+      }
     }
   }
 
