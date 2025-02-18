@@ -3,10 +3,11 @@ import { EventSService } from '../../services/event-s.service';
 import { EventM } from '../../models/eventM.model';
 import { CommonModule } from '@angular/common';
 import { LoggerService } from '../../services/logger.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-event-list',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './event-list.component.html',
   styleUrl: './event-list.component.css'
 })

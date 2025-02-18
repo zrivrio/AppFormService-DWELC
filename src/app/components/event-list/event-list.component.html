@@ -84,7 +84,8 @@
                       <td>{{ event.employee.name }}</td>
                       <td>{{ event.client }}</td>
                       <td>{{ event.date | date: 'dd/MM/yyyy' }}</td>
-                      <td><button class="btn btn-danger" (click)="deleteEvent(event.id)">Eliminar</button></td>
+                      <td><button class="btn btn-danger" (click)="deleteEvent(event.id)">Eliminar</button>
+                        <a class="btn btn-dark" [routerLink]="['/edit', event.id]">Editar</a></td>
                   </tr>
               </tbody>
           </table>

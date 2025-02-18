@@ -22,10 +22,6 @@ export class EventFormComponent implements OnInit {
   eventForm: FormGroup;
 
   // defino una propiedad 'selectedEmployee' para almacenar el empleado seleccionado.
-  
-  
-  
-  
   selectedEmployee: EmployeeM | null = null;
 
   // Configuración para el selector de fechas de ngx-bootstrap.

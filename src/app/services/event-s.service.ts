@@ -21,21 +21,15 @@ export class EventSService {
   //Metodo para agregar un nuevo evento a la lista
   //Recibe el parametro de evento del tipo EventM
   addEvento(evento: EventM): void {
+  // Obtener el ID más alto en la lista actual para evitar duplicados
+  const maxId = this.eventos.length > 0 ? Math.max(...this.eventos.map(e => e.id)) : 0;
+  evento.id = maxId + 1; // Asegurar que el ID sea único
+  evento.createdAt = new Date();
 
-    //Se asigna un ID al evento basado en la longitud actual del array eventos
-    //TAmbien se establece la fecha de creacion del evento como la fechay hora actual
-    evento.id = this.eventos.length + 1;
-    evento.createdAt = new Date();
-
-    //Se agrega el evnto al array de eventos
-    this.eventos.push(evento);
-    
-    //Se actualiza el contador correspondiente dependiendo de la clasificacion del evento
-    this.loggerService.updateCounts(evento.classification);
-
-    //Se guarda la lista actualizada de eventos en localStorage
-    this.saveEventos(); 
-  }
+  this.eventos.push(evento);
+  this.loggerService.updateCounts(evento.classification);
+  this.saveEventos();
+}
 
   //Metodo para guardar la lista de eventos en el localStorage 
   //Convierte el array evntos en una cadaena json y la almacena en el localStorage bajo la clasificacion eventos
@@ -87,6 +81,20 @@ deleteEvento(id: number): void {
   }
 }
 
+  //Metodo para editar un evento
+  editEvento(updateEvent: EventM, id: number): void {
+    const index = this.eventos.findIndex(evento => evento.id === id);
+    if(index !== -1){
+      const oldCalisification = this.eventos[index].classification;
+      this.eventos[index] = {...this.eventos[index], ...updateEvent};
+
+      if(oldCalisification !== updateEvent.classification){
+        this.loggerService.decreaseCount(oldCalisification);
+        this.loggerService.updateCounts(updateEvent.classification);
+      }
+      this.saveEventos();
+    }
+  }
 
 
 }
