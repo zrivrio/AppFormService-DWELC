@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LoggerService } from './logger.service';
 import { EventM } from '../models/eventM.model';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,8 @@ export class EventSService {
   //Defeinimos una propiedad privada que es un array del tipo EventM
   //En esta propiedada se almacenara la lista de eventos
   private eventos: EventM[] = [];
+
+  private event= new BehaviorSubject<EventM | null>(null);
   
   //Aqui se inyecta el loggerService como una dependencia
   //Tambien se llama al evento loadEventos() para cargar los eventos alamcenados en el localStorage al inicializar el servicio
@@ -93,6 +96,17 @@ deleteEvento(id: number): void {
         this.loggerService.updateCounts(updateEvent.classification);
       }
       this.saveEventos();
+    }
+  }
+
+  getEvento(){
+    return this.event.asObservable()
+  }
+
+  setEvent(evento : EventM | null){
+    this.event.next(evento);
+    if(evento){
+      localStorage.setItem('event', JSON.stringify(evento));
     }
   }
 

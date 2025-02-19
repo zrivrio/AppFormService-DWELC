@@ -4,7 +4,7 @@
     <!-- Título -->
     <div class="mb-3">
       <label for="title" class="form-label">Título</label>
-      <input type="text" class="form-control" id="title" formControlName="title" required>
+      <input type="text" class="form-control" id="title" formControlName="title" required (blur)="setLocalStorage()" value="{{localEvent?.title}}">
       <div *ngIf="eventForm.get('title')?.invalid && eventForm.get('title')?.touched" class="text-danger">
         El título es requerido.
       </div>
@@ -13,7 +13,7 @@
     <!-- Descripción -->
     <div class="mb-3">
       <label for="description" class="form-label">Descripción</label>
-      <textarea class="form-control" id="description" formControlName="description" rows="3" required></textarea>
+      <textarea class="form-control" id="description" formControlName="description" rows="3" required (blur)="setLocalStorage()">{{localEvent?.description}}</textarea>
       <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="text-danger">
         La descripción es requerida.
       </div>
@@ -22,7 +22,7 @@
     <!-- Clasificación -->
     <div class="mb-3">
       <label for="classification" class="form-label">Clasificación</label>
-      <select class="form-select" id="classification" formControlName="classification" required>
+      <select class="form-select" id="classification" formControlName="classification" required  (blur)="setLocalStorage()" value="{{localEvent?.classification}}">
         <option value="log">Log</option>
         <option value="warn">Warn</option>
         <option value="error">Error</option>
@@ -40,8 +40,8 @@
     <!-- Cliente -->
     <div class="mb-3">
       <label for="client" class="form-label">Cliente</label>
-      <input type="text" class="form-control" id="client" formControlName="client" required>
-      <div *ngIf="eventForm.get('client')?.invalid && eventForm.get('client')?.touched" class="text-danger">
+      <input type="text" class="form-control" id="client" formControlName="client" required (blur)="setLocalStorage()" value="{{localEvent?.client}}" >
+      <div *ngIf="eventForm.get('client')?.invalid && eventForm.get('client')?.touched" class="text-danger" >
         El cliente es requerido.
       </div>
     </div>
@@ -56,8 +56,9 @@
         class="form-control"
         bsDatepicker
         [bsConfig]="bsConfig"
+        (blur)="setLocalStorage()" value="{{localEvent?.date}}"
       >
-      <div *ngIf="eventForm.get('date')?.invalid && eventForm.get('date')?.touched" class="text-danger">
+      <div *ngIf="eventForm.get('date')?.invalid && eventForm.get('date')?.touched" class="text-danger" >
         La fecha es requerida y debe ser válida.
       </div>
     </div>

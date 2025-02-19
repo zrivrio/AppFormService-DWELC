@@ -5,6 +5,8 @@ import { EventSService } from '../../services/event-s.service';
 import { EmployeeSService } from '../../services/employee-s.service';
 import { CommonModule } from '@angular/common';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { EventM } from '../../models/eventM.model';
+import e from 'express';
 
 @Component({
   selector: 'app-event-form',
@@ -24,6 +26,8 @@ export class EventFormComponent implements OnInit {
   // defino una propiedad 'selectedEmployee' para almacenar el empleado seleccionado.
   selectedEmployee: EmployeeM | null = null;
 
+  localEvent: EventM | null = null;
+
   // Configuración para el selector de fechas de ngx-bootstrap.
   bsConfig = {
     dateInputFormat: 'DD-MM-YYYY', // Formato de la fecha.
@@ -38,18 +42,23 @@ export class EventFormComponent implements OnInit {
     private employeeService: EmployeeSService // Servicio para gestionar empleados.
   ) {
     // Inicializamos el formulario con controles y validaciones.
+    console.log(this.localEvent)
     this.eventForm = this.fb.group({
-      title: ['', Validators.required], 
-      description: ['', Validators.required],
-      classification: ['log', Validators.required], //valor por defecto: log
-      employee: ['', Validators.required],
-      client: ['', Validators.required], 
-      date: ['', Validators.required]
+      title: [this.localEvent?.title, Validators.required], 
+      description: [this.localEvent?.description, Validators.required],
+      classification: [this.localEvent?.classification, Validators.required], //valor por defecto: log
+      employee: [this.localEvent?.employee.name, Validators.required],
+      client: [this.localEvent?.client, Validators.required], 
+      date: [this.localEvent?.date, Validators.required]
     });
   }
 
   // Método que se ejecuta al inicializar el componente.
   ngOnInit(): void {
+    this.eventService.getEvento().subscribe(event => {
+      this.localEvent = event;
+      console.log(event)
+    })
     // Nos suscribimos al Observable 'getSelectedEmployee' del EmployeeSService.
     // Esto nos permite recibir actualizaciones cuando el empleado seleccionado cambie.
     this.employeeService.getSelectedEmployee().subscribe(employee => {
@@ -87,4 +96,20 @@ export class EventFormComponent implements OnInit {
       console.error('Debe seleccionar un empleado antes de enviar el formulario.');
     }
   }
+
+  setLocalStorage(){
+    if(typeof localStorage !== 'undefined'){
+      const event = {
+        ...this.eventForm.value, 
+        employee: this.selectedEmployee, 
+        id: Date.now(), 
+        createdAt: new Date() 
+      }
+      this.eventService.setEvent(event);
+    }
+  }
+  
+
+
+
 }
