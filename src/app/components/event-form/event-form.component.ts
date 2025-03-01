@@ -44,31 +44,43 @@ export class EventFormComponent implements OnInit {
     // Inicializamos el formulario con controles y validaciones.
     console.log(this.localEvent)
     this.eventForm = this.fb.group({
-      title: [this.localEvent?.title, Validators.required], 
-      description: [this.localEvent?.description, Validators.required],
-      classification: [this.localEvent?.classification, Validators.required], //valor por defecto: log
-      employee: [this.localEvent?.employee.name, Validators.required],
-      client: [this.localEvent?.client, Validators.required], 
-      date: [this.localEvent?.date, Validators.required]
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      classification: ['', Validators.required],
+      employee: ['', Validators.required], // Almacena el ID, no el name
+      client: ['', Validators.required],
+      date: ['', Validators.required]
     });
   }
 
   // Método que se ejecuta al inicializar el componente.
   ngOnInit(): void {
-    this.eventService.getEvento().subscribe(event => {
-      this.localEvent = event;
-      console.log(event)
-    })
-    // Nos suscribimos al Observable 'getSelectedEmployee' del EmployeeSService.
-    // Esto nos permite recibir actualizaciones cuando el empleado seleccionado cambie.
-    this.employeeService.getSelectedEmployee().subscribe(employee => {
-      this.selectedEmployee = employee; // Actualizamos la propiedad 'selectedEmployee'.
+    const storedEvent = localStorage.getItem('event');
+    if(storedEvent){
+      this.localEvent = JSON.parse(storedEvent);
+      if(this.localEvent){
+        this.eventForm.patchValue(this.localEvent);
+      }
+    }
 
-      // Si hay un empleado seleccionado, actualizamos el valor del control 'employee' en el formulario.
+    this.eventForm.valueChanges.subscribe((value) => {
+      if(!this.localEvent){
+       return;
+      }
+      const eventUpadte: EventM = {
+        ...this.localEvent,
+        ...value,
+        employee: this.selectedEmployee,
+        id: this.localEvent.id ?? Date.now(),
+        createdAt: this.localEvent.createdAt ?? new Date()
+      }; 
+     localStorage.setItem('event', JSON.stringify(eventUpadte));
+    });
+
+    this.employeeService.getSelectedEmployee().subscribe(employee => {
+      this.selectedEmployee = employee;
       if (employee) {
-        this.eventForm.patchValue({
-          employee: employee.id
-        });
+        this.eventForm.patchValue({ employee: employee.id });
       }
     });
   }
@@ -90,6 +102,8 @@ export class EventFormComponent implements OnInit {
       // Llamamos al método 'addEvento' del EventSService para guardar el evento.
       this.eventService.addEvento(evento);
 
+      this.eventService.setEvent(evento);
+
       // Reseteamos el formulario después de guardar el evento.
       this.eventForm.reset();
     } else {
@@ -98,18 +112,16 @@ export class EventFormComponent implements OnInit {
   }
 
   setLocalStorage(){
-    if(typeof localStorage !== 'undefined'){
-      const event = {
+    if(typeof localStorage !== 'undefined' && this.eventForm.valid && this.selectedEmployee){
+      const event: EventM = {
         ...this.eventForm.value, 
         employee: this.selectedEmployee, 
         id: Date.now(), 
         createdAt: new Date() 
-      }
+      };
       this.eventService.setEvent(event);
+      console.log("Evento guardado en localStorage:", event);
     }
   }
-  
-
-
 
 }
