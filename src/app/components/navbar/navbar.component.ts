@@ -25,13 +25,23 @@ export class NavbarComponent implements OnInit {
   // Método que se ejecuta al inicializar el componente.
   ngOnInit(): void {
     // Nos suscribimos al Observable 'getEmployees' del EmployeeSService.
-    // Esto nos permite recibir la lista de empleados cuando esté disponible.
     this.employeeService.getEmployees().subscribe(employees => {
       this.employees = employees; // Actualizamos la propiedad 'employees' con la lista recibida.
+  
+      // Verificamos si hay un empleado seleccionado en el localStorage.
+      const storedEmployee = localStorage.getItem('selectedEmployee');
+      if (storedEmployee) {
+        const parsedEmployee = JSON.parse(storedEmployee) as EmployeeM;
+  
+        // Verificamos si el empleado almacenado aún existe en la lista de empleados.
+        if (this.employees.some(emp => emp.id === parsedEmployee.id)) {
+          this.selectedEmployee = parsedEmployee;
+          this.employeeService.setSelectedEmployee(this.selectedEmployee); // Actualizamos el empleado seleccionado en el servicio.
+        } 
+      }
     });
-
+  
     // Nos suscribimos al Observable 'getSelectedEmployee' del EmployeeSService.
-    // Esto nos permite recibir actualizaciones cuando el empleado seleccionado cambie.
     this.employeeService.getSelectedEmployee().subscribe(employee => {
       this.selectedEmployee = employee; // Actualizamos la propiedad 'selectedEmployee'.
     });
@@ -44,6 +54,11 @@ export class NavbarComponent implements OnInit {
 
     // Buscamos el empleado correspondiente en la lista 'employees' usando el ID seleccionado.
     this.selectedEmployee = this.employees.find(emp => emp.id.toString() === selectedId) || null;
+
+    if (this.selectedEmployee) {
+      localStorage.setItem('selectedEmployee', JSON.stringify(this.selectedEmployee));
+    }
+
 
     // Actualizamos el empleado seleccionado en el EmployeeSService.
     this.employeeService.setSelectedEmployee(this.selectedEmployee);
